@@ -18,6 +18,9 @@ export default function Page() {
     const [ramActive, setRamActive] = useState(0)
     const [ramActivePerc, setRamActivePerc] = useState(0)
     const [ramCachePerc, setRamCachePerc] = useState(0)
+    const [swapUsed, setSwapUsed] = useState(0)
+    const [swapTotal, setSwapTotal] = useState(0)
+    const [swapPerc, setSwapPerc] = useState(0)
 
     useEffect(() => {
         fetch('/api/stats').finally(() => {
@@ -43,6 +46,9 @@ export default function Page() {
             setRamAvail(data.ramAvailable)
             setRamCache(data.ramCache)
             setRamCachePerc(100*data.ramCache/data.ramTotal)
+            setSwapUsed(data.swapUsed)
+            setSwapTotal(data.swapTotal)
+            setSwapPerc(100*data.swapUsed/data.swapTotal)
           })
         })
       }, [])
@@ -61,9 +67,9 @@ export default function Page() {
                 <LineGauge value={cpuUsage} />
               </div>
               <div style={{display: "grid"}}>
-                {cpuGovernor && <FlexVal>Governor: <span>{cpuGovernor}</span></FlexVal>}
-                {perfCores && <FlexVal>Performance Cores: <span>{perfCores}</span></FlexVal>}
-                {effiCores && <FlexVal>Efficiency Cores: <span>{effiCores}</span></FlexVal>}
+                {cpuGovernor ? <FlexVal>Governor: <span>{cpuGovernor}</span></FlexVal> : ""}
+                {(perfCores && effiCores) ? <FlexVal>Performance Cores: <span>{perfCores}</span></FlexVal> : ""}
+                {(effiCores && perfCores) ? <FlexVal>Efficiency Cores: <span>{effiCores}</span></FlexVal> : ""}
               </div>
             </Section>
 
@@ -76,12 +82,14 @@ export default function Page() {
                   {value: ramActivePerc, color: "#5189de"},
                   {value: ramCachePerc,  color: "#e2a26d"}
                 ]} />
-                <LineGauge value={ramPerc} />
+                
+                <div style={{display: "flex", justifyContent: "space-between"}}>
+                  <span>swap</span><span>{formatBytes(swapUsed)} used</span>
+                </div>
+                <LineGauge value={swapPerc} />
               </div>
               <div style={{display: "grid"}}>
-                {cpuGovernor && <FlexVal>Governor: <span>{cpuGovernor}</span></FlexVal>}
-                {perfCores && <FlexVal>Performance Cores: <span>{perfCores}</span></FlexVal>}
-                {effiCores && <FlexVal>Efficiency Cores: <span>{effiCores}</span></FlexVal>}
+
               </div>
             </Section>
           </div>
@@ -119,8 +127,22 @@ function AdvancedLineGauge({ values }) {
 
   return (
     <div className="lineGauge">
-      {values.map((x: Value, i: number) => <div key={i} className={`lineGaugeTrack`} style={{width: x.value+"%", color: x.color}}></div>)}
+      {values.map((x: Value, i: number) => <div key={i} className={`lineGaugeTrack`} style={{width: x.value+"%", backgroundColor: x.color}}></div>)}
     </div>
+  )
+}
+function GradientLineGauge({ values }) {
+
+  let gradient = "linear-gradient(90deg"
+  let perc_total = 0
+  for (let value of values) {
+    gradient += `,${value.color} ${(perc_total+value.value).toFixed(1)}%`
+    perc_total += value.value
+  }
+
+  gradient += `,var(--track-background) 100%)`
+  return (
+    <div className="lineGauge" style={{background: gradient}}></div>
   )
 }
 
