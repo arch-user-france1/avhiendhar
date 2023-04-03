@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import io from 'socket.io-client';
+import { Inter } from 'next/font/google'
+const inter = Inter({ subsets: ['latin'] })
 
 
 export default function Page() {
@@ -16,7 +18,6 @@ export default function Page() {
     const [ramActive, setRamActive] = useState(0)
     const [ramActivePerc, setRamActivePerc] = useState(0)
     const [ramCachePerc, setRamCachePerc] = useState(0)
-
 
     useEffect(() => {
         fetch('/api/stats').finally(() => {
@@ -51,7 +52,7 @@ export default function Page() {
     return (
         <>
 
-          <div style={{display: "flex", justifyContent: "center", gap: "3rem"}}>
+          <div style={{display: "flex", justifyContent: "center", gap: "3rem"}} className={inter.className}>
             <Section name="Processor">
               <div>
                 <div style={{display: "flex", justifyContent: "space-between"}}>
