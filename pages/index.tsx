@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import io from 'socket.io-client';
-import { Inter } from 'next/font/google'
+import { Inter } from 'next/font/google';
 const inter = Inter({ subsets: ['latin'] })
 
 import dynamic from "next/dynamic";
-const Plot = dynamic(() => import("react-plotly.js"), { ssr: false, })import { Inter } from 'next/font/google'
+const Plot = dynamic(() => import("react-plotly.js"), { ssr: false, })
 
 
 
