@@ -23,8 +23,8 @@
   background-color: var(--section-color);
   border-radius: .25rem;
 
-  min-width: 9rem;
-  min-height: 14rem;
+  min-width: 14rem;
+  min-height: 16rem;
   padding-left: 2rem;
   padding-right: 2rem;
   padding-top: .5rem;
@@ -36,6 +36,8 @@
 
   display: grid;
   gap: .5rem;
+
+  transition: .5s;
 }
 
 .lineGauge {

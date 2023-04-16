@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import io from 'socket.io-client';
-
+import dynamic from "next/dynamic";
+const Plot = dynamic(() => import("react-plotly.js"), { ssr: false, })
 
 export default function Page() {
     const [cpuUsage, setCpuUsage] = useState(0)
@@ -20,6 +21,8 @@ export default function Page() {
     const [swapTotal, setSwapTotal] = useState(0)
     const [swapPerc, setSwapPerc] = useState(0)
 
+    const [cpuGraph, setCpuGraph] = useState([])
+
 
     useEffect(() => {
         fetch('/api/stats').finally(() => {
@@ -31,6 +34,7 @@ export default function Page() {
           })
 
           socket.on('stats', jsn => {
+            const timestamp = new Date()
             const data = JSON.parse(jsn)
             setCores(data.cores)
             setCpuUsage(data.cpuUsage)
@@ -48,11 +52,55 @@ export default function Page() {
             setSwapUsed(data.swapUsed)
             setSwapTotal(data.swapTotal)
             setSwapPerc(100*data.swapUsed/data.swapTotal)
+
+            cpuGraphAddValue({
+              timestamp: timestamp,
+              value: data.cpuUsage
+            })
           })
         })
       }, [])
 
+      function cpuGraphAddValue(value) {
+        setCpuGraph(prev => {
+          if (prev.length > 60) {
+            return [...prev.splice(0, 1), value]
+          }
+          return [...prev, value]
+        })
+      }
 
+      const data = [
+        {
+          x: cpuGraph.map((item) => item.timestamp),
+          y: cpuGraph.map((item) => item.value),
+          type: 'scatter',
+          mode: 'lines+markers',
+          marker: { color: 'red' },
+          line: { width: 1 },
+        },
+      ];
+
+      const layout = {
+        width: 640,
+        height: 480,
+        title: 'CPU Usage',
+        xaxis: {
+          title: 'Timestamp',
+        },
+        yaxis: {
+          title: 'CPU Usage (%)',
+        },
+        transition: {
+          duration: 500,
+          easing: 'cubic-in-out',
+        },
+        plot_bgcolor: 'rgba(0,0,0,0)',
+        paper_bgcolor: 'rgba(0,0,0,0)',
+        showgrid: false,
+      };
+
+      console.log(cpuGraph)
 
     return (
         <>
@@ -91,6 +139,12 @@ export default function Page() {
 
               </div>
             </Section>
+
+          </div>
+
+
+          <div style={{display: "flex", justifyContent: "center", marginTop: "5rem"}}>
+            <Plot data={data} layout={layout} />
           </div>
         </>
     )
