@@ -1,7 +1,12 @@
 import { useEffect, useState } from "react";
 import io from 'socket.io-client';
+import { Inter } from 'next/font/google'
+const inter = Inter({ subsets: ['latin'] })
+
 import dynamic from "next/dynamic";
-const Plot = dynamic(() => import("react-plotly.js"), { ssr: false, })
+const Plot = dynamic(() => import("react-plotly.js"), { ssr: false, })import { Inter } from 'next/font/google'
+
+
 
 export default function Page() {
     const [cpuUsage, setCpuUsage] = useState(0)
@@ -105,7 +110,7 @@ export default function Page() {
     return (
         <>
 
-          <div style={{display: "flex", justifyContent: "center", gap: "3rem"}}>
+          <div style={{display: "flex", justifyContent: "center", gap: "3rem"}} className={inter.className}>
             <Section name="Processor">
               <div>
                 <div style={{display: "flex", justifyContent: "space-between"}}>
