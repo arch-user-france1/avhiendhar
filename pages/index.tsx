@@ -68,18 +68,20 @@ export default function Page() {
 
       function cpuGraphAddValue(value) {
         setCpuGraph(prev => {
-          if (prev.length > 60) {
-            return [...prev.splice(0, 1), value]
+          const newGraph = [...prev, value];
+          if (newGraph.length > 60) {
+            return newGraph.slice(newGraph.length - 60);
+          } else {
+            return newGraph;
           }
-          return [...prev, value]
-        })
+        });
       }
+      
 
       const data = [
         {
           x: cpuGraph.map((item) => item.timestamp),
           y: cpuGraph.map((item) => item.value),
-          type: 'scatter',
           mode: 'lines+markers',
           marker: { color: 'red' },
           line: { width: 1 },
@@ -98,11 +100,10 @@ export default function Page() {
         },
         transition: {
           duration: 500,
-          easing: 'cubic-in-out',
+          easing: "cubic-in-out" as "cubic-in-out"
         },
         plot_bgcolor: 'rgba(0,0,0,0)',
         paper_bgcolor: 'rgba(0,0,0,0)',
-        showgrid: false,
       };
 
       console.log(cpuGraph)
