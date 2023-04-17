@@ -93,10 +93,15 @@ export default function Page() {
         height: 480,
         title: 'CPU Usage',
         xaxis: {
-          title: 'Timestamp',
+          title: '',
+          showGrid: false, // does not work, but is documented to be that way
+          gridcolor: "transparent",
         },
         yaxis: {
-          title: 'CPU Usage (%)',
+          title: '',
+          range: [0, 100],
+          showGrid: false,
+          gridcolor: "transparent",
         },
         transition: {
           duration: 500,
